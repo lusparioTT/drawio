@@ -9,7 +9,8 @@
 	 */
 	var moveImage =  (!mxClient.IS_SVG) ? IMAGE_PATH + '/move.png' :
 		'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAMAAABhEH5lAAAASFBMVEUAAAAAAAB/f3/9/f319fUfHx/7+/s+Pj69vb0AAAAAAAAAAAAAAAAAAAAAAAAAAAB2dnZ1dXUAAAAAAAAVFRX///8ZGRkGBgbOcI1hAAAAE3RSTlMA+vr9/f38+fb1893Bo00u+/tFvPJUBQAAAIRJREFUGNM0jEcSxCAQAxlydGqD///TNWxZBx1aXVIrWysplbapL3sFxgDq/idXBnHgBPK1nIxwc55vCXl6dRFtrV6svs/A/UjsPcpzA5tqyByD92HqQlMFh45BG6ND1DiKSoPDdm96N77bg5F+wyaEqRGb8ZiOwHQqdg9hehszcLAEIQB2lQ4p/sEpnAAAAABJRU5ErkJggg==';
-
+	EditorUi.prototype.altShiftActions[68] = 'selectDescendants'; // Alt+Shift+D
+	
 	/**
 	 * Overrides folding based on treeFolding style.
 	 */
@@ -97,12 +98,6 @@
 		var model = graph.getModel();
 		var spacing = 10;
 		var level = 40;
-	
-		// Adds resources for actions
-		mxResources.parse('selectChildren=Select Children');
-		mxResources.parse('selectSiblings=Select Siblings');
-		mxResources.parse('selectDescendants=Select Descendants');
-		mxResources.parse('selectParent=Select Parent');
 	
 		function isTreeVertex(cell)
 		{
@@ -264,7 +259,7 @@
 						
 				graph.setSelectionCells(subtree);
 			}
-		}, null, null, 'Alt+Shift+T');
+		}, null, null, 'Alt+Shift+D');
 			
 		/**
 		 * Overriddes
@@ -373,7 +368,7 @@
 							
 							if (newEdges.length == 0 && edges.length > 0)
 							{
-								var clone = this.cloneCells([edges[0]])[0];
+								var clone = this.cloneCell(edges[0]);
 								this.addEdge(clone, graph.getDefaultParent(),
 									this.model.getTerminal(edges[0], true), result[i]);
 							}
@@ -481,7 +476,7 @@
 											temp = graph.model.getTerminal(edges[0], true);
 										}
 										
-										var clone = this.cloneCells([edges[0]])[0];
+										var clone = this.cloneCell(edges[0]);
 										this.addEdge(clone, graph.getDefaultParent(), temp, result[i]);
 									}
 								}
@@ -940,7 +935,7 @@
 			}
 		};
 	
-		// Overrides keyboard shortcuts
+		// Overrides keyboard shortcuts inside tree containers
 		var altShiftActions = {88: ui.actions.get('selectChildren'), // Alt+Shift+X
 				84: ui.actions.get('selectSubtree'), // Alt+Shift+T
 				80: ui.actions.get('selectParent'), // Alt+Shift+P
@@ -1169,7 +1164,7 @@
 		Sidebar.prototype.createAdvancedShapes = function()
 		{
 			var result = sidebarCreateAdvancedShapes.apply(this, arguments);
-			var graph = this.editorUi.editor.graph;
+			var graph = this.graph;
 			
 			return result.concat([
 				this.addEntry('tree container', function()

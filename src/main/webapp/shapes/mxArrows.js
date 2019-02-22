@@ -26,12 +26,11 @@ function mxShapeArrows2Arrow(bounds, fill, stroke, strokewidth)
 */
 mxUtils.extend(mxShapeArrows2Arrow, mxActor);
 
-(
-		mxShapeArrows2Arrow.prototype.customProperties = [
-			{name: 'dx', dispName: 'Arrowhead Length', type: 'float', min: 0, defVal: 40},
-			{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, max:1, defVal: 0.6},
-			{name: 'notch', dispName: 'Notch', type: 'float', min:0, defVal: 0}
-		]);
+mxShapeArrows2Arrow.prototype.customProperties = [
+	{name: 'dx', dispName: 'Arrowhead Length', type: 'float', min: 0, defVal: 40},
+	{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, max:1, defVal: 0.6},
+	{name: 'notch', dispName: 'Notch', type: 'float', min:0, defVal: 0}
+];
 
 mxShapeArrows2Arrow.prototype.cst = {
 		ARROW : 'mxgraph.arrows2.arrow'
@@ -125,8 +124,6 @@ mxShapeArrows2Arrow.prototype.getLabelBounds = function(rect)
 
 mxCellRenderer.registerShape(mxShapeArrows2Arrow.prototype.cst.ARROW, mxShapeArrows2Arrow);
 
-mxShapeArrows2Arrow.prototype.constraints = null;
-
 Graph.handleFactory[mxShapeArrows2Arrow.prototype.cst.ARROW] = function(state)
 {
 	var handles = [Graph.createHandle(state, ['dx', 'dy'], function(bounds)
@@ -157,6 +154,27 @@ Graph.handleFactory[mxShapeArrows2Arrow.prototype.cst.ARROW] = function(state)
 
 }
 
+mxShapeArrows2Arrow.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dy = h * 0.5 * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
+	var dx = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx', this.dx))));
+	var notch = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'notch', this.notch))));
+
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0.5), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0.5), false, null, notch, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w - dx) * 0.5, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w - dx) * 0.5, h - dy));
+
+	return (constr);
+};
+
 //**********************************************************************************************************************************************************
 //Two Way Arrow
 //**********************************************************************************************************************************************************
@@ -183,11 +201,10 @@ mxShapeArrows2TwoWayArrow.prototype.cst = {
 		TWO_WAY_ARROW : 'mxgraph.arrows2.twoWayArrow'
 };
 
-(
-		mxShapeArrows2TwoWayArrow.prototype.customProperties = [
-			{name: 'dx', dispName: 'Arrowhead Length', type: 'float', min:0, defVal: 35},
-			{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, max:1, defVal: 0.6}
-		]);
+mxShapeArrows2TwoWayArrow.prototype.customProperties = [
+	{name: 'dx', dispName: 'Arrowhead Length', type: 'float', min:0, defVal: 35},
+	{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, max:1, defVal: 0.6}
+];
 
 /**
 * Function: paintVertexShape
@@ -273,6 +290,28 @@ Graph.handleFactory[mxShapeArrows2TwoWayArrow.prototype.cst.TWO_WAY_ARROW] = fun
 
 }
 
+mxShapeArrows2TwoWayArrow.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dy = h * 0.5 * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
+	var dx = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx', this.dx))));
+
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0.5), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0.5), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false, null, 0, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false, null, 0, h - dy));
+
+	return (constr);
+};
+
 //**********************************************************************************************************************************************************
 //Stylised Arrow
 //**********************************************************************************************************************************************************
@@ -297,13 +336,12 @@ function mxShapeArrows2StylisedArrow(bounds, fill, stroke, strokewidth)
 */
 mxUtils.extend(mxShapeArrows2StylisedArrow, mxActor);
 
-(
-		mxShapeArrows2StylisedArrow.prototype.customProperties = [
-			{name: 'dx', dispName: 'Arrowhead Length', type: 'float', min:0, defVal:40},
-			{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, max:1, defVal:0.6},
-			{name: 'notch', dispName: 'Notch', type: 'float', min:0, defVal:0},
-			{name: 'feather', dispName: 'Feather', type: 'float', min:0, max:1, defVal:0.4},
-		]);
+mxShapeArrows2StylisedArrow.prototype.customProperties = [
+	{name: 'dx', dispName: 'Arrowhead Length', type: 'float', min:0, defVal:40},
+	{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, max:1, defVal:0.6},
+	{name: 'notch', dispName: 'Notch', type: 'float', min:0, defVal:0},
+	{name: 'feather', dispName: 'Feather', type: 'float', min:0, max:1, defVal:0.4},
+];
 
 mxShapeArrows2StylisedArrow.prototype.cst = {
 		STYLISED_ARROW : 'mxgraph.arrows2.stylisedArrow'
@@ -382,6 +420,28 @@ Graph.handleFactory[mxShapeArrows2StylisedArrow.prototype.cst.STYLISED_ARROW] = 
 
 }
 
+mxShapeArrows2StylisedArrow.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dy = h * 0.5 * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
+	var dx = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx', this.dx))));
+	var notch = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'notch', this.notch))));
+	var feather = h * 0.5 * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'feather', this.feather))));
+
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0.5), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0.5), false, null, notch, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, feather));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h - feather));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx - 10, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx - 10, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w - dx) * 0.5, (dy + feather) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w - dx) * 0.5, h - (dy + feather) * 0.5));
+
+	return (constr);
+};
+
 //**********************************************************************************************************************************************************
 //Sharp Arrow
 //**********************************************************************************************************************************************************
@@ -410,13 +470,12 @@ mxShapeArrows2SharpArrow.prototype.cst = {
 		SHARP_ARROW : 'mxgraph.arrows2.sharpArrow'
 };
 
-(
-		mxShapeArrows2SharpArrow.prototype.customProperties = [
-			{name: 'dx1', dispName: 'Arrowhead Arrow Width', type: 'float', min:0, defVal:18},
-			{name: 'dy1', dispName: 'Arrow Arrow Width', type: 'float', min:0, max:1, defVal:0.67},
-			{name: 'dx2', dispName: 'Arrowhead Angle', type: 'float', min:0, defVal:18},
-			{name: 'notch', dispName: 'Notch', type: 'float', min:0, defVal:0}
-		]);
+mxShapeArrows2SharpArrow.prototype.customProperties = [
+	{name: 'dx1', dispName: 'Arrowhead Arrow Width', type: 'float', min:0, defVal:18},
+	{name: 'dy1', dispName: 'Arrow Arrow Width', type: 'float', min:0, max:1, defVal:0.67},
+	{name: 'dx2', dispName: 'Arrowhead Angle', type: 'float', min:0, defVal:18},
+	{name: 'notch', dispName: 'Notch', type: 'float', min:0, defVal:0}
+];
 
 /**
 * Function: paintVertexShape
@@ -433,7 +492,6 @@ mxShapeArrows2SharpArrow.prototype.paintVertexShape = function(c, x, y, w, h)
 	var notch = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'notch', this.notch))));
 	var dx1a = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx1', this.dx1))));
 	var dy1a = h * 0.5 * Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'dy1', this.dy1))));
-
 	var x2 = 0;
 	
 	if (h != 0)
@@ -499,8 +557,39 @@ Graph.handleFactory[mxShapeArrows2SharpArrow.prototype.cst.SHARP_ARROW] = functi
 	handles.push(handle3);
 	
 	return handles;
+};
 
-}
+mxShapeArrows2SharpArrow.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dy1 = h * 0.5 * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'dy1', this.dy1))));
+	var dx1 = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx1', this.dx1))));
+	var dx2 = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx2', this.dx2))));
+	var notch = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'notch', this.notch))));
+	var dx1a = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx1', this.dx1))));
+	var dy1a = h * 0.5 * Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'dy1', this.dy1))));
+	var x2 = 0;
+	
+	if (h != 0)
+	{
+		x2 = dx1a + dx2 * dy1a * 2 / h;
+	}
+	
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0.5), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0.5), false, null, notch, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, dy1));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx1, dy1));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - x2, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx2, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h - dy1));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx1, h - dy1));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - x2, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx2, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w - dx1) * 0.5, dy1));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w - dx1) * 0.5, h - dy1));
+
+	return (constr);
+};
 
 //**********************************************************************************************************************************************************
 //Sharp Arrow2
@@ -529,15 +618,14 @@ function mxShapeArrows2SharpArrow2(bounds, fill, stroke, strokewidth)
 */
 mxUtils.extend(mxShapeArrows2SharpArrow2, mxActor);
 
-(
-		mxShapeArrows2SharpArrow2.prototype.customProperties = [
-			{name: 'dx1', dispName: 'Arrowhead Arrow Width', type: 'float', min:0, defVal:18},
-			{name: 'dy1', dispName: 'Arrow Width', type: 'float', min:0, max:1, defVal:0.67},
-			{name: 'dx2', dispName: 'Arrowhead Angle', type: 'float', min:0, defVal:18},
-			{name: 'dx3', dispName: 'Arrowhead Edge X', type: 'float', min:0, defVal:27},
-			{name: 'dy3', dispName: 'Arrowhead Edge Y', type: 'float', min:0, max:1, defVal:0.15},
-			{name: 'notch', dispName: 'Notch', type: 'float', min:0, defVal:0}
-		]);
+mxShapeArrows2SharpArrow2.prototype.customProperties = [
+	{name: 'dx1', dispName: 'Arrowhead Arrow Width', type: 'float', min:0, defVal:18},
+	{name: 'dy1', dispName: 'Arrow Width', type: 'float', min:0, max:1, defVal:0.67},
+	{name: 'dx2', dispName: 'Arrowhead Angle', type: 'float', min:0, defVal:18},
+	{name: 'dx3', dispName: 'Arrowhead Edge X', type: 'float', min:0, defVal:27},
+	{name: 'dy3', dispName: 'Arrowhead Edge Y', type: 'float', min:0, max:1, defVal:0.15},
+	{name: 'notch', dispName: 'Notch', type: 'float', min:0, defVal:0}
+];
 
 mxShapeArrows2SharpArrow2.prototype.cst = {
 		SHARP_ARROW2 : 'mxgraph.arrows2.sharpArrow2'
@@ -554,14 +642,10 @@ mxShapeArrows2SharpArrow2.prototype.paintVertexShape = function(c, x, y, w, h)
 
 	var dy1 = h * 0.5 * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'dy1', this.dy1))));
 	var dx1 = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx1', this.dx1))));
-
 	var dx2 = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx2', this.dx2))));
-	
 	var dy3 = h * 0.5 * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'dy3', this.dy3))));
 	var dx3 = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx3', this.dx3))));
-	
 	var notch = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'notch', this.notch))));
-
 	var dx1a = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx1', this.dx1))));
 	var dy1a = h * 0.5 * Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'dy1', this.dy1))));
 
@@ -637,7 +721,35 @@ Graph.handleFactory[mxShapeArrows2SharpArrow2.prototype.cst.SHARP_ARROW2] = func
 	handles.push(handle4);
 
 	return handles;
-}
+};
+
+mxShapeArrows2SharpArrow2.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dy1 = h * 0.5 * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'dy1', this.dy1))));
+	var dx1 = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx1', this.dx1))));
+	var dx2 = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx2', this.dx2))));
+	var dy3 = h * 0.5 * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'dy3', this.dy3))));
+	var dx3 = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx3', this.dx3))));
+	var notch = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'notch', this.notch))));
+	var dx1a = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx1', this.dx1))));
+	var dy1a = h * 0.5 * Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'dy1', this.dy1))));
+
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0.5), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0.5), false, null, notch, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, dy1));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx1, dy1));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx3, dy3));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx2, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h - dy1));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx1, h - dy1));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx3, h - dy3));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx2, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w - dx1) * 0.5, dy1));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w - dx1) * 0.5, h - dy1));
+
+	return (constr);
+};
 
 //**********************************************************************************************************************************************************
 //Callout Arrow
@@ -663,13 +775,12 @@ function mxShapeArrows2CalloutArrow(bounds, fill, stroke, strokewidth)
 */
 mxUtils.extend(mxShapeArrows2CalloutArrow, mxActor);
 
-(
-		mxShapeArrows2CalloutArrow.prototype.customProperties = [
-			{name: 'dx', dispName: 'Arrowhead Length', type: 'float', min:0, defVal:20},
-			{name: 'arrowHead', dispName: 'Arrowhead Width', type: 'float', min:0, defVal:10},
-			{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, defVal:10},
-			{name: 'notch', dispName: 'Rectangle Width', type: 'float', min:0, defVal:60}
-		]);
+mxShapeArrows2CalloutArrow.prototype.customProperties = [
+	{name: 'dx', dispName: 'Arrowhead Length', type: 'float', min:0, defVal:20},
+	{name: 'arrowHead', dispName: 'Arrowhead Width', type: 'float', min:0, defVal:10},
+	{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, defVal:10},
+	{name: 'notch', dispName: 'Rectangle Width', type: 'float', min:0, defVal:60}
+];
 
 mxShapeArrows2CalloutArrow.prototype.cst = {
 		CALLOUT_ARROW : 'mxgraph.arrows2.calloutArrow'
@@ -752,7 +863,34 @@ Graph.handleFactory[mxShapeArrows2CalloutArrow.prototype.cst.CALLOUT_ARROW] = fu
 	handles.push(handle3);
 	
 	return handles;
-}
+};
+
+mxShapeArrows2CalloutArrow.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dy = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
+	var dx = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx', this.dx))));
+	var notch = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'notch', this.notch))));
+	var arrowHead = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'arrowHead', this.arrowHead))));
+
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, notch, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null,notch, h * 0.5 - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, h * 0.5 - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, h * 0.5 - dy - arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, h * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, h * 0.5 + dy + arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, h * 0.5 + dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, notch, h * 0.5 + dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, notch, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, notch * 0.5 , 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, notch * 0.5 , h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0.5), false, null, (notch + w - dx) * 0.5, -dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0.5), false, null, (notch + w - dx) * 0.5, dy));
+
+	return (constr);
+};
 
 //**********************************************************************************************************************************************************
 //Bend Arrow
@@ -778,14 +916,13 @@ function mxShapeArrows2BendArrow(bounds, fill, stroke, strokewidth)
 */
 mxUtils.extend(mxShapeArrows2BendArrow, mxActor);
 
-(
-		mxShapeArrows2BendArrow.prototype.customProperties = [
-			{name: 'dx', dispName: 'Arrowhead Length', type: 'float', min:0, defVal: 38},
-			{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, defVal: 15},
-			{name: 'notch', dispName: 'Notch', type: 'float', min:0, defVal: 0},
-			{name: 'arrowHead', dispName: 'Arrowhead Width', type: 'float', min:0, defVal:55},
-			{name: 'rounded', dispName: 'Rounded', type: 'boolean', defVal: false}
-		]);
+mxShapeArrows2BendArrow.prototype.customProperties = [
+	{name: 'dx', dispName: 'Arrowhead Length', type: 'float', min:0, defVal: 38},
+	{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, defVal: 15},
+	{name: 'notch', dispName: 'Notch', type: 'float', min:0, defVal: 0},
+	{name: 'arrowHead', dispName: 'Arrowhead Width', type: 'float', min:0, defVal:55},
+	{name: 'rounded', dispName: 'Rounded', type: 'boolean', defVal: false}
+];
 
 mxShapeArrows2BendArrow.prototype.cst = {
 		BEND_ARROW : 'mxgraph.arrows2.bendArrow'
@@ -811,6 +948,7 @@ mxShapeArrows2BendArrow.prototype.paintVertexShape = function(c, x, y, w, h)
 	c.lineTo(w, arrowHead * 0.5);
 	c.lineTo(w - dx, arrowHead);
 	c.lineTo(w - dx, arrowHead / 2 + dy);
+	
 	if (rounded == '1')
 	{
 		c.lineTo(dy * 2.2, arrowHead / 2 + dy);
@@ -889,7 +1027,43 @@ Graph.handleFactory[mxShapeArrows2BendArrow.prototype.cst.BEND_ARROW] = function
 	handles.push(handle3);
 
 	return handles;
-}
+};
+
+mxShapeArrows2BendArrow.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dy = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
+	var dx = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx', this.dx))));
+	var notch = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'notch', this.notch))));
+	var arrowHead = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'arrowHead', this.arrowHead))));
+	var rounded = mxUtils.getValue(this.style, 'rounded', '0');
+
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w - dx + dy * 2) * 0.5, arrowHead / 2 - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, arrowHead / 2 - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, arrowHead * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, arrowHead / 2 + dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w - dx + dy * 2) * 0.5, arrowHead / 2 + dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dy * 2, (h - arrowHead / 2 - dy) * 0.5 + arrowHead / 2 + dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dy * 2, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dy, h - notch));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, (h - arrowHead / 2 - dy) * 0.5 + arrowHead / 2 + dy));
+
+	if (rounded == '1')
+	{
+		constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dy * 0.586, arrowHead / 2 - dy * 0.414));
+		constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 2 * dy  + dy * 0.0586, arrowHead / 2 + dy + dy * 0.0586));
+	}
+	else
+	{
+		constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, arrowHead / 2 - dy));
+		constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dy * 2, arrowHead / 2 + dy));
+	}
+	
+	return (constr);
+};
 
 //**********************************************************************************************************************************************************
 //Bend Double Arrow
@@ -915,13 +1089,12 @@ function mxShapeArrows2BendDoubleArrow(bounds, fill, stroke, strokewidth)
 */
 mxUtils.extend(mxShapeArrows2BendDoubleArrow, mxActor);
 
-(
-		mxShapeArrows2BendDoubleArrow.prototype.customProperties = [
-			{name: 'dx', dispName: 'Arrowhead Length', type: 'float', min:0, defVal:38},
-			{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, defVal:15},
-			{name: 'arrowHead', dispName: 'Arrowhead Width', type: 'float', min:0, defVal:55},
-			{name: 'rounded', dispName: 'Rounded', type: 'boolean', defVal:false}
-		]);
+mxShapeArrows2BendDoubleArrow.prototype.customProperties = [
+	{name: 'dx', dispName: 'Arrowhead Length', type: 'float', min:0, defVal:38},
+	{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, defVal:15},
+	{name: 'arrowHead', dispName: 'Arrowhead Width', type: 'float', min:0, defVal:55},
+	{name: 'rounded', dispName: 'Rounded', type: 'boolean', defVal:false}
+];
 
 mxShapeArrows2BendDoubleArrow.prototype.cst = {
 		BEND_DOUBLE_ARROW : 'mxgraph.arrows2.bendDoubleArrow'
@@ -946,6 +1119,7 @@ mxShapeArrows2BendDoubleArrow.prototype.paintVertexShape = function(c, x, y, w, 
 	c.lineTo(w, arrowHead * 0.5);
 	c.lineTo(w - dx, arrowHead);
 	c.lineTo(w - dx, arrowHead / 2 + dy);
+
 	if (rounded == '1')
 	{
 		c.lineTo(arrowHead / 2 + dy * 1.2, arrowHead / 2 + dy);
@@ -1011,8 +1185,43 @@ Graph.handleFactory[mxShapeArrows2BendDoubleArrow.prototype.cst.BEND_DOUBLE_ARRO
 	handles.push(handle2);
 
 	return handles;
+};
 
-}
+mxShapeArrows2BendDoubleArrow.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dy = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
+	var dx = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx', this.dx))));
+	var arrowHead = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'arrowHead', this.arrowHead))));
+	var rounded = mxUtils.getValue(this.style, 'rounded', '0');
+
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx , 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, arrowHead * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, arrowHead / 2 + dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (arrowHead / 2 + dy + w - dx) * 0.5, arrowHead / 2 + dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (arrowHead / 2 + dy + w - dx) * 0.5, arrowHead / 2 - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, arrowHead / 2 + dy, (arrowHead / 2 + dy + h - dx) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, arrowHead / 2 - dy, (arrowHead / 2 + dy + h - dx) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, arrowHead / 2 + dy, h - dx));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, arrowHead, h - dx));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, arrowHead / 2, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h - dx));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, arrowHead / 2 - dy, h - dx));
+
+	if (rounded == '1')
+	{
+		constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, arrowHead / 2 - dy * 0.414, arrowHead / 2 - dy * 0.414));
+		constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, arrowHead / 2 + dy + dy * 0.0586, arrowHead / 2 + dy + dy * 0.0586));
+	}
+	else
+	{
+		constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, arrowHead / 2 - dy, arrowHead / 2 - dy));
+		constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, arrowHead / 2 + dy, arrowHead / 2 + dy));
+	}
+	
+	return (constr);
+};
 
 //**********************************************************************************************************************************************************
 //Callout Double Arrow
@@ -1038,13 +1247,12 @@ function mxShapeArrows2CalloutDoubleArrow(bounds, fill, stroke, strokewidth)
 */
 mxUtils.extend(mxShapeArrows2CalloutDoubleArrow, mxActor);
 
-(
-		mxShapeArrows2CalloutDoubleArrow.prototype.customProperties = [
-			{name: 'dx', dispName: 'Arrowhead Length', type: 'float', min:0, defVal:20},
-			{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, defVal:10},
-			{name: 'arrowHead', dispName: 'Arrowhead Width', type: 'float', min:0, defVal:10},
-			{name: 'notch', dispName: 'Rect Size', type: 'float', min:0, defVal:24}
-		]);
+mxShapeArrows2CalloutDoubleArrow.prototype.customProperties = [
+	{name: 'dx', dispName: 'Arrowhead Length', type: 'float', min:0, defVal:20},
+	{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, defVal:10},
+	{name: 'arrowHead', dispName: 'Arrowhead Width', type: 'float', min:0, defVal:10},
+	{name: 'notch', dispName: 'Rect Size', type: 'float', min:0, defVal:24}
+];
 
 mxShapeArrows2CalloutDoubleArrow.prototype.cst = {
 		CALLOUT_DOUBLE_ARROW : 'mxgraph.arrows2.calloutDoubleArrow'
@@ -1134,7 +1342,35 @@ Graph.handleFactory[mxShapeArrows2CalloutDoubleArrow.prototype.cst.CALLOUT_DOUBL
 	handles.push(handle3);
 	
 	return handles;
-}
+};
+
+mxShapeArrows2CalloutDoubleArrow.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dy = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
+	var dx = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx', this.dx))));
+	var notch = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'notch', this.notch))));
+	var arrowHead = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'arrowHead', this.arrowHead))));
+
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0.5), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0.5), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w / 2 - notch, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w / 2 + notch, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 1), false, null, w / 2 - notch, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 1), false, null, w / 2 + notch, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, h * 0.5 - dy - arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, h * 0.5 + dy + arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx, h * 0.5 - dy - arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx, h * 0.5 + dy + arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w * 1.5 - dx + notch) * 0.5, h * 0.5 - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w * 1.5 - dx + notch) * 0.5, h * 0.5 + dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w * 0.5 + dx - notch) * 0.5, h * 0.5 - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w * 0.5 + dx - notch) * 0.5, h * 0.5 + dy));
+	
+	return (constr);
+};
 
 //**********************************************************************************************************************************************************
 //Callout Quad Arrow
@@ -1160,13 +1396,12 @@ function mxShapeArrows2CalloutQuadArrow(bounds, fill, stroke, strokewidth)
 */
 mxUtils.extend(mxShapeArrows2CalloutQuadArrow, mxActor);
 
-(
-		mxShapeArrows2CalloutQuadArrow.prototype.customProperties = [
-			{name: 'dx', dispName: 'Arrowhead Length', type: 'float', min:0, defVal:20},
-			{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, defVal: 10},
-			{name: 'notch', dispName: 'Rect Size', type: 'float', min:0, defVal:24},
-			{name: 'arrowHead', dispName: 'Arrowhead Width', type: 'float', min:0, defVal:10}
-		]);
+mxShapeArrows2CalloutQuadArrow.prototype.customProperties = [
+	{name: 'dx', dispName: 'Arrowhead Length', type: 'float', min:0, defVal:20},
+	{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, defVal: 10},
+	{name: 'notch', dispName: 'Rect Size', type: 'float', min:0, defVal:24},
+	{name: 'arrowHead', dispName: 'Arrowhead Width', type: 'float', min:0, defVal:10}
+];
 
 mxShapeArrows2CalloutQuadArrow.prototype.cst = {
 		CALLOUT_QUAD_ARROW : 'mxgraph.arrows2.calloutQuadArrow'
@@ -1270,7 +1505,51 @@ Graph.handleFactory[mxShapeArrows2CalloutQuadArrow.prototype.cst.CALLOUT_QUAD_AR
 	handles.push(handle3);
 	
 	return handles;
-}
+};
+
+mxShapeArrows2CalloutQuadArrow.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dy = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
+	var dx = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx', this.dx))));
+	var notch = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'notch', this.notch))));
+	var arrowHead = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'arrowHead', this.arrowHead))));
+
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0.5), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0.5), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 + dy, h * 0.5 - notch));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 + notch, h * 0.5 - notch));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 + notch, h * 0.5 - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 + dy, h * 0.5 + notch));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 + notch, h * 0.5 + notch));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 + notch, h * 0.5 + dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 - dy, h * 0.5 + notch));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 - notch, h * 0.5 + notch));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 - notch, h * 0.5 + dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 - dy, h * 0.5 - notch));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 - notch, h * 0.5 - notch));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 - notch, h * 0.5 - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, h * 0.5 - dy - arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, h * 0.5 + dy + arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 - dy - arrowHead, h - dx));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 + dy + arrowHead, h - dx));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx, h * 0.5 - dy - arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx, h * 0.5 + dy + arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 - dy - arrowHead, dx));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 + dy + arrowHead, dx));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.75 + (notch - dx) * 0.5, h * 0.5 - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.75 + (notch - dx) * 0.5, h * 0.5 + dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 - dy, h * 0.75 + (notch - dx) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 + dy, h * 0.75 + (notch - dx) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.25 - (notch - dx) * 0.5, h * 0.5 - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.25 - (notch - dx) * 0.5, h * 0.5 + dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 - dy, h * 0.25 - (notch - dx) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 + dy, h * 0.25 - (notch - dx) * 0.5));
+	
+	return (constr);
+};
 
 //**********************************************************************************************************************************************************
 //Callout Double 90 Arrow
@@ -1297,14 +1576,13 @@ function mxShapeArrows2CalloutDouble90Arrow(bounds, fill, stroke, strokewidth)
 */
 mxUtils.extend(mxShapeArrows2CalloutDouble90Arrow, mxActor);
 
-(
-		mxShapeArrows2CalloutDouble90Arrow.prototype.customProperties = [
-			{name: 'dx1', dispName: 'Arrowhead Length', type: 'float', min:0, defVal:20},
-			{name: 'dy1', dispName: 'Arrow Width', type: 'float', min:0, defVal: 10},
-			{name: 'dx2', dispName: 'Callout Width', type: 'float', min:0, defVal:70},
-			{name: 'dy2', dispName: 'Callout Height', type: 'float', min:0, defVal:70},
-			{name: 'arrowHead', dispName: 'ArrowHead Width', type: 'float', min:0, defVal:10}
-		]);
+mxShapeArrows2CalloutDouble90Arrow.prototype.customProperties = [
+	{name: 'dx1', dispName: 'Arrowhead Length', type: 'float', min:0, defVal:20},
+	{name: 'dy1', dispName: 'Arrow Width', type: 'float', min:0, defVal: 10},
+	{name: 'dx2', dispName: 'Callout Width', type: 'float', min:0, defVal:70},
+	{name: 'dy2', dispName: 'Callout Height', type: 'float', min:0, defVal:70},
+	{name: 'arrowHead', dispName: 'ArrowHead Width', type: 'float', min:0, defVal:10}
+];
 
 mxShapeArrows2CalloutDouble90Arrow.prototype.cst = {
 		CALLOUT_DOUBLE_90_ARROW : 'mxgraph.arrows2.calloutDouble90Arrow'
@@ -1397,7 +1675,35 @@ Graph.handleFactory[mxShapeArrows2CalloutDouble90Arrow.prototype.cst.CALLOUT_DOU
 	handles.push(handle3);
 	
 	return handles;
-}
+};
+
+mxShapeArrows2CalloutDouble90Arrow.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dy1 = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'dy1', this.dy1))));
+	var dx1 = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx1', this.dx1))));
+	var dx2 = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx2', this.dx2))));
+	var dy2 = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dy2', this.dy2))));
+	var arrowHead = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'arrowHead', this.arrowHead))));
+
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2 * 0.5, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w - dx1 + dx2) * 0.5, dy2 * 0.5 - dy1));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx1, dy2 * 0.5 - dy1 - arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, dy2 * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx1, dy2 * 0.5 + dy1 + arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w - dx1 + dx2) * 0.5, dy2 * 0.5 + dy1));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2, dy2));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2 * 0.5 + dy1, (h - dx1 + dy2) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2 * 0.5 - dy1, (h - dx1 + dy2) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2 / 2 + dy1 + arrowHead, h - dx1));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2 / 2, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2 / 2 - dy1 - arrowHead, h - dx1));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, dy2));
+	
+	return (constr);
+};
 
 //**********************************************************************************************************************************************************
 //Quad Arrow
@@ -1423,12 +1729,11 @@ function mxShapeArrows2QuadArrow(bounds, fill, stroke, strokewidth)
 */
 mxUtils.extend(mxShapeArrows2QuadArrow, mxActor);
 
-(
-		mxShapeArrows2QuadArrow.prototype.customProperties = [
-			{name: 'dx', dispName: 'Arrowhead Length', type: 'float', min:0, defVal:20},
-			{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, defVal:10},
-			{name: 'arrowHead', dispName: 'Arrowhead Width', type: 'float', min:0, defVal:10}
-		]);
+mxShapeArrows2QuadArrow.prototype.customProperties = [
+	{name: 'dx', dispName: 'Arrowhead Length', type: 'float', min:0, defVal:20},
+	{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, defVal:10},
+	{name: 'arrowHead', dispName: 'Arrowhead Width', type: 'float', min:0, defVal:10}
+];
 
 mxShapeArrows2QuadArrow.prototype.cst = {
 		QUAD_ARROW : 'mxgraph.arrows2.quadArrow'
@@ -1511,7 +1816,38 @@ Graph.handleFactory[mxShapeArrows2QuadArrow.prototype.cst.QUAD_ARROW] = function
 	handles.push(handle2);
 	
 	return handles;
-}
+};
+
+mxShapeArrows2QuadArrow.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dy = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
+	var dx = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx', this.dx))));
+	var arrowHead = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'arrowHead', this.arrowHead))));
+
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0.5), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0.5), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, h * 0.5 - dy - arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, h * 0.5 + dy + arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx, h * 0.5 - dy - arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx, h * 0.5 + dy + arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 - dy - arrowHead, dx));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 + dy + arrowHead, dx));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 - dy - arrowHead, h - dx));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 + dy + arrowHead, h - dx));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 - dy, (dx - dy) * 0.5 + h * 0.25));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 + dy, (dx - dy) * 0.5 + h * 0.25));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 - dy, (dy - dx) * 0.5 + h * 0.75));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 + dy, (dy - dx) * 0.5 + h * 0.75));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (dx - dy) * 0.5 + w * 0.25, h * 0.5 - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (dx - dy) * 0.5 + w * 0.25, h * 0.5 + dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (dy - dx) * 0.5 + w * 0.75, h * 0.5 - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (dy - dx) * 0.5 + w * 0.75, h * 0.5 + dy));
+	
+	return (constr);
+};
 
 //**********************************************************************************************************************************************************
 //Triad Arrow
@@ -1536,12 +1872,11 @@ function mxShapeArrows2TriadArrow(bounds, fill, stroke, strokewidth)
 */
 mxUtils.extend(mxShapeArrows2TriadArrow, mxActor);
 
-(
-		mxShapeArrows2TriadArrow.prototype.customProperties = [
-			{name: 'dx', dispName: 'Arrowhead Length', type: 'float', min:0, defVal:20},
-			{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, defVal:10},
-			{name: 'arrowHead', dispName: 'Arrowhead Width', type: 'float', min:0, defVal:40}
-		]);
+mxShapeArrows2TriadArrow.prototype.customProperties = [
+	{name: 'dx', dispName: 'Arrowhead Length', type: 'float', min:0, defVal:20},
+	{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, defVal:10},
+	{name: 'arrowHead', dispName: 'Arrowhead Width', type: 'float', min:0, defVal:40}
+];
 
 mxShapeArrows2TriadArrow.prototype.cst = {
 		TRIAD_ARROW : 'mxgraph.arrows2.triadArrow'
@@ -1617,7 +1952,34 @@ Graph.handleFactory[mxShapeArrows2TriadArrow.prototype.cst.TRIAD_ARROW] = functi
 	handles.push(handle2);
 	
 	return handles;
-}
+};
+
+mxShapeArrows2TriadArrow.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dy = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
+	var dx = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx', this.dx))));
+	var arrowHead = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'arrowHead', this.arrowHead))));
+
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false, null, - arrowHead * 0.5, dx));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false, null, arrowHead * 0.5, dx));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, h - arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, h - arrowHead * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx, h - arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h - arrowHead * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w * 1.5 - dx + arrowHead * 0.5 - dy) * 0.5, h - arrowHead + dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w * 1.5 - dx + arrowHead * 0.5 - dy) * 0.5, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w * 0.5 + dx - arrowHead * 0.5 + dy) * 0.5, h - arrowHead + dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w * 0.5 + dx - arrowHead * 0.5 + dy) * 0.5, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 - arrowHead * 0.5 + dy, (dx + h - arrowHead + dy) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 + arrowHead * 0.5 - dy, (dx + h - arrowHead + dy) * 0.5));
+	
+	return (constr);
+};
 
 //**********************************************************************************************************************************************************
 //Tailed Arrow
@@ -1643,15 +2005,14 @@ function mxShapeArrows2TailedArrow(bounds, fill, stroke, strokewidth)
 */
 mxUtils.extend(mxShapeArrows2TailedArrow, mxActor);
 
-(
-		mxShapeArrows2TailedArrow.prototype.customProperties = [
-			{name: 'dx1', dispName: 'Arrowhead Length', type: 'float', min:0, defVal: 20},
-			{name: 'dy1', dispName: 'Arrow Width', type: 'float', min:0, defVal: 10},
-			{name: 'dx2', dispName: 'Tail Length', type: 'float', min:0, defVal: 25},
-			{name: 'dy2', dispName: 'Tail Width', type: 'float', min:0, defVal:30},
-			{name: 'notch', dispName: 'Notch', type: 'float', min:0, defVal: 0},
-			{name: 'arrowHead', dispName: 'Arrowhead Width', type: 'float', min:0, defVal:20}
-		]);
+mxShapeArrows2TailedArrow.prototype.customProperties = [
+	{name: 'dx1', dispName: 'Arrowhead Length', type: 'float', min:0, defVal: 20},
+	{name: 'dy1', dispName: 'Arrow Width', type: 'float', min:0, defVal: 10},
+	{name: 'dx2', dispName: 'Tail Length', type: 'float', min:0, defVal: 25},
+	{name: 'dy2', dispName: 'Tail Width', type: 'float', min:0, defVal:30},
+	{name: 'notch', dispName: 'Notch', type: 'float', min:0, defVal: 0},
+	{name: 'arrowHead', dispName: 'Arrowhead Width', type: 'float', min:0, defVal:20}
+];
 
 mxShapeArrows2TailedArrow.prototype.cst = {
 		TAILED_ARROW : 'mxgraph.arrows2.tailedArrow'
@@ -1672,7 +2033,6 @@ mxShapeArrows2TailedArrow.prototype.paintVertexShape = function(c, x, y, w, h)
 	var dx2 = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx2', this.dx2))));
 	var notch = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'notch', this.notch))));
 	var arrowHead = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'arrowHead', this.arrowHead))));
-
 	var x2 = 0;
 	
 	if (dy2 != 0)
@@ -1759,7 +2119,37 @@ Graph.handleFactory[mxShapeArrows2TailedArrow.prototype.cst.TAILED_ARROW] = func
 	handles.push(handle4);
 
 	return handles;
-}
+};
+
+mxShapeArrows2TailedArrow.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dy1 = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'dy1', this.dy1))));
+	var dx1 = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx1', this.dx1))));
+	var dy2 = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'dy2', this.dy2))));
+	var dx2 = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx2', this.dx2))));
+	var notch = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'notch', this.notch))));
+	var arrowHead = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'arrowHead', this.arrowHead))));
+	var x2 = 0;
+	
+	if (dy2 != 0)
+	{
+		x2 = dx2 + dy2 * (dy2 - dy1) / dy2;
+	}
+
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0.5), false, null, notch, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h * 0.5 - dy2));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2, h * 0.5 - dy2));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w - dx1 + x2) * 0.5, h * 0.5 - dy1));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx1, h * 0.5 - dy1 - arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h * 0.5 + dy2));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2, h * 0.5 + dy2));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w - dx1 + x2) * 0.5, h * 0.5 + dy1));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx1, h * 0.5 + dy1 + arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0.5), false));
+	
+	return (constr);
+};
 
 //**********************************************************************************************************************************************************
 //Tailed Arrow with Notch
@@ -1785,15 +2175,14 @@ function mxShapeArrows2TailedNotchedArrow(bounds, fill, stroke, strokewidth)
 */
 mxUtils.extend(mxShapeArrows2TailedNotchedArrow, mxActor);
 
-(
-		mxShapeArrows2TailedNotchedArrow.prototype.customProperties = [
-			{name: 'dx1', dispName: 'Arrowhead Length', type: 'float', mix:0, defVal:20},
-			{name: 'dy1', dispName: 'Arrow Width', type: 'float', min:0, defVal:10},
-			{name: 'dx2', dispName: 'Tail Length', type: 'float', min:0, defVal:25},
-			{name: 'dy2', dispName: 'Tail Width', type: 'float', min:0, defVal:30},
-			{name: 'notch', dispName: 'Notch', type: 'float', min:0, defVal:20},
-			{name: 'arrowHead', dispName: 'Arrowhead Width', type: 'float', min:0, defVal:20}
-		]);
+mxShapeArrows2TailedNotchedArrow.prototype.customProperties = [
+	{name: 'dx1', dispName: 'Arrowhead Length', type: 'float', mix:0, defVal:20},
+	{name: 'dy1', dispName: 'Arrow Width', type: 'float', min:0, defVal:10},
+	{name: 'dx2', dispName: 'Tail Length', type: 'float', min:0, defVal:25},
+	{name: 'dy2', dispName: 'Tail Width', type: 'float', min:0, defVal:30},
+	{name: 'notch', dispName: 'Notch', type: 'float', min:0, defVal:20},
+	{name: 'arrowHead', dispName: 'Arrowhead Width', type: 'float', min:0, defVal:20}
+];
 
 mxShapeArrows2TailedNotchedArrow.prototype.cst = {
 		TAILED_NOTCHED_ARROW : 'mxgraph.arrows2.tailedNotchedArrow'
@@ -1814,7 +2203,6 @@ mxShapeArrows2TailedNotchedArrow.prototype.paintVertexShape = function(c, x, y, 
 	var dx2 = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx2', this.dx2))));
 	var notch = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'notch', this.notch))));
 	var arrowHead = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'arrowHead', this.arrowHead))));
-
 	var x2 = 0;
 	
 	if (dy2 != 0)
@@ -1901,7 +2289,37 @@ Graph.handleFactory[mxShapeArrows2TailedNotchedArrow.prototype.cst.TAILED_NOTCHE
 	handles.push(handle4);
 
 	return handles;
-}
+};
+
+mxShapeArrows2TailedNotchedArrow.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dy1 = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'dy1', this.dy1))));
+	var dx1 = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx1', this.dx1))));
+	var dy2 = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'dy2', this.dy2))));
+	var dx2 = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx2', this.dx2))));
+	var notch = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'notch', this.notch))));
+	var arrowHead = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'arrowHead', this.arrowHead))));
+	var x2 = 0;
+	
+	if (dy2 != 0)
+	{
+		x2 = dx2 + notch * (dy2 - dy1) / dy2;
+	}
+
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0.5), false, null, notch, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h * 0.5 - dy2));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2, h * 0.5 - dy2));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w - dx1 + x2) * 0.5, h * 0.5 - dy1));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx1, h * 0.5 - dy1 - arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h * 0.5 + dy2));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2, h * 0.5 + dy2));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w - dx1 + x2) * 0.5, h * 0.5 + dy1));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx1, h * 0.5 + dy1 + arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0.5), false));
+	
+	return (constr);
+};
 
 //**********************************************************************************************************************************************************
 //Striped Arrow
@@ -1926,12 +2344,11 @@ function mxShapeArrows2StripedArrow(bounds, fill, stroke, strokewidth)
 */
 mxUtils.extend(mxShapeArrows2StripedArrow, mxActor);
 
-(
-		mxShapeArrows2StripedArrow.prototype.customProperties = [
-			{name: 'dx', dispName: 'Arrowhead Length', type: 'float', min:0, defVal:40},
-			{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, max:1, defVal:0.6},
-			{name: 'notch', dispName: 'Stripes Length', type: 'float', min:0, defVal:25}
-		]);
+mxShapeArrows2StripedArrow.prototype.customProperties = [
+	{name: 'dx', dispName: 'Arrowhead Length', type: 'float', min:0, defVal:40},
+	{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, max:1, defVal:0.6},
+	{name: 'notch', dispName: 'Stripes Length', type: 'float', min:0, defVal:25}
+];
 
 mxShapeArrows2StripedArrow.prototype.cst = {
 		STRIPED_ARROW : 'mxgraph.arrows2.stripedArrow'
@@ -1970,7 +2387,6 @@ mxShapeArrows2StripedArrow.prototype.paintVertexShape = function(c, x, y, w, h)
 	c.lineTo(notch * 0.32, dy);
 	c.close();
 	c.fillAndStroke();
-	
 };
 
 mxCellRenderer.registerShape(mxShapeArrows2StripedArrow.prototype.cst.STRIPED_ARROW, mxShapeArrows2StripedArrow);
@@ -2004,8 +2420,28 @@ Graph.handleFactory[mxShapeArrows2StripedArrow.prototype.cst.STRIPED_ARROW] = fu
 	handles.push(handle2);
 	
 	return handles;
+};
 
-}
+mxShapeArrows2StripedArrow.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dy = h * 0.5 * Math.max(0, Math.min(1, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
+	var dx = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx', this.dx))));
+	var notch = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'notch', this.notch))));
+
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0.5), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0.5), false, null, 0, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w - dx) * 0.5, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (w - dx) * 0.5, h - dy));
+	
+	return (constr);
+};
 
 //**********************************************************************************************************************************************************
 //Jump-In Arrow
@@ -2030,12 +2466,11 @@ function mxShapeArrows2JumpInArrow(bounds, fill, stroke, strokewidth)
 */
 mxUtils.extend(mxShapeArrows2JumpInArrow, mxActor);
 
-(
-		mxShapeArrows2JumpInArrow.prototype.customProperties = [
-			{name: 'dx', dispName: 'Arrowhead Length', type: 'float', min:0, defVal:38},
-			{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, defVal:15},
-			{name: 'arrowHead', dispName: 'Arrowhead Width', type: 'float', min:0, defVal:55}
-		]);
+mxShapeArrows2JumpInArrow.prototype.customProperties = [
+	{name: 'dx', dispName: 'Arrowhead Length', type: 'float', min:0, defVal:38},
+	{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, defVal:15},
+	{name: 'arrowHead', dispName: 'Arrowhead Width', type: 'float', min:0, defVal:55}
+];
 
 mxShapeArrows2JumpInArrow.prototype.cst = {
 		JUMP_IN_ARROW : 'mxgraph.arrows2.jumpInArrow'
@@ -2099,7 +2534,22 @@ Graph.handleFactory[mxShapeArrows2JumpInArrow.prototype.cst.JUMP_IN_ARROW] = fun
 	handles.push(handle2);
 
 	return handles;
-}
+};
+
+mxShapeArrows2JumpInArrow.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dy = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
+	var dx = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx', this.dx))));
+	var arrowHead = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'arrowHead', this.arrowHead))));
+
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, arrowHead * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, arrowHead));
+	
+	return (constr);
+};
 
 //**********************************************************************************************************************************************************
 //U Turn Arrow
@@ -2124,12 +2574,11 @@ function mxShapeArrows2UTurnArrow(bounds, fill, stroke, strokewidth)
 */
 mxUtils.extend(mxShapeArrows2UTurnArrow, mxActor);
 
-(
-		mxShapeArrows2UTurnArrow.prototype.customProperties = [
-			{name: 'dx2', dispName: 'Arrowhead Length', type: 'float', min:0, defVal:25},
-			{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, defVal:11},
-			{name: 'arrowHead', dispName: 'Arrowhead Width', type: 'float', min:0, defVal:43}
-		]);
+mxShapeArrows2UTurnArrow.prototype.customProperties = [
+	{name: 'dx2', dispName: 'Arrowhead Length', type: 'float', min:0, defVal:25},
+	{name: 'dy', dispName: 'Arrow Width', type: 'float', min:0, defVal:11},
+	{name: 'arrowHead', dispName: 'Arrowhead Width', type: 'float', min:0, defVal:43}
+];
 
 mxShapeArrows2UTurnArrow.prototype.cst = {
 		U_TURN_ARROW : 'mxgraph.arrows2.uTurnArrow'
@@ -2146,9 +2595,7 @@ mxShapeArrows2UTurnArrow.prototype.paintVertexShape = function(c, x, y, w, h)
 
 	var dy = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
 	var arrowHead = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'arrowHead', this.arrowHead))));
-
 	var dx = (h - arrowHead / 2 + dy) / 2;
-
 	var dx2 = Math.max(0, parseFloat(mxUtils.getValue(this.style, 'dx2', this.dx2)));
 	
 	c.begin();
@@ -2218,5 +2665,27 @@ Graph.handleFactory[mxShapeArrows2UTurnArrow.prototype.cst.U_TURN_ARROW] = funct
 	handles.push(handle3);
 
 	return handles;
-}
+};
 
+mxShapeArrows2UTurnArrow.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dy = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
+	var arrowHead = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'arrowHead', this.arrowHead))));
+	var dx = (h - arrowHead / 2 + dy) / 2;
+	var dx2 = Math.max(0, parseFloat(mxUtils.getValue(this.style, 'dx2', this.dx2)));
+	
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx + dx2, arrowHead * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx, arrowHead));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (dx + w) * 0.5, h - 2 * dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, Math.max(w, dx), h - 2 * dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, Math.max(w, dx), h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, Math.max(w, dx), h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, (dx + w) * 0.5, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, (h + arrowHead * 0.5 - dy) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, arrowHead - 2 * dy, (h + arrowHead * 0.5 - dy) * 0.5));
+	
+	return (constr);
+};

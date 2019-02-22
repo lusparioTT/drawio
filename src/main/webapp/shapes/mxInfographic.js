@@ -25,10 +25,9 @@ mxUtils.extend(mxShapeInfographicNumEntryVert, mxActor);
 
 mxShapeInfographicNumEntryVert.prototype.cst = {NUM_ENTRY_VERT : 'mxgraph.infographic.numberedEntryVert'};
 
-(
-		mxShapeInfographicNumEntryVert.prototype.customProperties = [
-			{name:'dy', dispName:'Circle Size', min:0, defVal: 25}
-		]);
+mxShapeInfographicNumEntryVert.prototype.customProperties = [
+	{name:'dy', dispName:'Circle Size', min:0, defVal: 25}
+];
 
 /**
 * Function: paintVertexShape
@@ -61,8 +60,6 @@ mxShapeInfographicNumEntryVert.prototype.paintVertexShape = function(c, x, y, w,
 
 mxCellRenderer.registerShape(mxShapeInfographicNumEntryVert.prototype.cst.NUM_ENTRY_VERT, mxShapeInfographicNumEntryVert);
 
-mxShapeInfographicNumEntryVert.prototype.constraints = null;
-
 Graph.handleFactory[mxShapeInfographicNumEntryVert.prototype.cst.NUM_ENTRY_VERT] = function(state)
 {
 	var handles = [Graph.createHandle(state, ['dy'], function(bounds)
@@ -76,6 +73,25 @@ Graph.handleFactory[mxShapeInfographicNumEntryVert.prototype.cst.NUM_ENTRY_VERT]
 	})];
 			
 	return handles;
+};
+
+mxShapeInfographicNumEntryVert.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dy = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
+	var inset = 5;
+	var d = Math.min(dy, w - 2 * inset, h - inset);
+	
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, d * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0), false, null, 0, d * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0.5), false, null, 0, d * 0.25));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0.5), false, null, 0, d * 0.25));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 1), false));
+
+	return (constr);
 };
 
 //**********************************************************************************************************************************************************
@@ -103,12 +119,11 @@ mxUtils.extend(mxShapeInfographicBendingArch, mxActor);
 
 mxShapeInfographicBendingArch.prototype.cst = {BENDING_ARCH : 'mxgraph.infographic.bendingArch'};
 
-(
-		mxShapeInfographicBendingArch.prototype.customProperties = [
-			{name:'startAngle', dispName:'Start Angle', min:0, max:1, defVal: 0.75},
-			{name:'endAngle', dispName:'End Angle', min:0, max:1, defVal: 0.25},
-			{name:'arcWidth', dispName:'Arc Width', min:0, max:1, defVal: 0.25}
-		]);
+mxShapeInfographicBendingArch.prototype.customProperties = [
+	{name:'startAngle', dispName:'Start Angle', min:0, max:1, defVal: 0.75},
+	{name:'endAngle', dispName:'End Angle', min:0, max:1, defVal: 0.25},
+	{name:'arcWidth', dispName:'Arc Width', min:0, max:1, defVal: 0.25}
+];
 
 /**
 * Function: paintVertexShape
@@ -252,10 +267,9 @@ mxUtils.extend(mxShapeInfographicParallelogram, mxActor);
 
 mxShapeInfographicParallelogram.prototype.cst = {PARALLELOGRAM : 'mxgraph.infographic.parallelogram'};
 
-(
-		mxShapeInfographicParallelogram.prototype.customProperties = [
-			{name:'dx', dispName:'Angle', min:0, defVal: 15}
-		]);
+mxShapeInfographicParallelogram.prototype.customProperties = [
+	{name:'dx', dispName:'Angle', min:0, defVal: 15}
+];
 
 /**
 * Function: paintVertexShape
@@ -279,8 +293,6 @@ mxShapeInfographicParallelogram.prototype.paintVertexShape = function(c, x, y, w
 
 mxCellRenderer.registerShape(mxShapeInfographicParallelogram.prototype.cst.PARALLELOGRAM, mxShapeInfographicParallelogram);
 
-mxShapeInfographicParallelogram.prototype.constraints = null;
-
 Graph.handleFactory[mxShapeInfographicParallelogram.prototype.cst.PARALLELOGRAM] = function(state)
 {
 	var handles = [Graph.createHandle(state, ['dx'], function(bounds)
@@ -294,6 +306,24 @@ Graph.handleFactory[mxShapeInfographicParallelogram.prototype.cst.PARALLELOGRAM]
 	})];
 			
 	return handles;
+};
+
+mxShapeInfographicParallelogram.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dx = Math.max(0, Math.min(w * 0.5, parseFloat(mxUtils.getValue(this.style, 'dx', this.dx))));
+	var w2 = w - 2 * dx;
+
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 2 * dx, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 2 * dx + w2 * 0.5, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0.5), false, null, dx, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - 2 * dx, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0.5), false, null, w - dx, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w2 * 0.5, h));
+
+	return (constr);
 };
 
 //**********************************************************************************************************************************************************
@@ -320,11 +350,10 @@ mxUtils.extend(mxShapeInfographicRibbonRolled, mxActor);
 
 mxShapeInfographicRibbonRolled.prototype.cst = {RIBBON_ROLLED : 'mxgraph.infographic.ribbonRolled'};
 
-(
-		mxShapeInfographicRibbonRolled.prototype.customProperties = [
-			{name:'dx', dispName:'Roll Length', min:0, defVal: 185},
-			{name:'dy', dispName:'Ribbon Width', min:0, defVal: 15}
-		]);
+mxShapeInfographicRibbonRolled.prototype.customProperties = [
+	{name:'dx', dispName:'Roll Length', min:0, defVal: 185},
+	{name:'dy', dispName:'Ribbon Width', min:0, defVal: 15}
+];
 
 /**
 * Function: paintVertexShape
@@ -380,8 +409,6 @@ mxShapeInfographicRibbonRolled.prototype.paintVertexShape = function(c, x, y, w,
 
 mxCellRenderer.registerShape(mxShapeInfographicRibbonRolled.prototype.cst.RIBBON_ROLLED, mxShapeInfographicRibbonRolled);
 
-mxShapeInfographicRibbonRolled.prototype.constraints = null;
-
 Graph.handleFactory[mxShapeInfographicRibbonRolled.prototype.cst.RIBBON_ROLLED] = function(state)
 {
 	var handles = [Graph.createHandle(state, ['dx', 'dy'], function(bounds)
@@ -397,6 +424,29 @@ Graph.handleFactory[mxShapeInfographicRibbonRolled.prototype.cst.RIBBON_ROLLED] 
 	})];
 			
 	return handles;
+};
+
+mxShapeInfographicRibbonRolled.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dx = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx', this.dx))));
+	var dy = Math.max(0, Math.min(h * 0.5, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
+	var h2 = h - dy;
+	
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.25, 0), false, null, 0, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false, null, 0, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.75, 0), false, null, 0, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0), false, null, 0, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0.5), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, h2));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.75, 0), false, null, 0, h2));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false, null, 0, h2));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.25, 0), false, null, 0, h2));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 1), false, null, 0, -dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0.5), false));
+
+	return (constr);
 };
 
 //**********************************************************************************************************************************************************
@@ -423,11 +473,10 @@ mxUtils.extend(mxShapeInfographicRibbonDoubleFolded, mxActor);
 
 mxShapeInfographicRibbonDoubleFolded.prototype.cst = {RIBBON_DOUBLE_FOLDED : 'mxgraph.infographic.ribbonDoubleFolded'};
 
-(
-		mxShapeInfographicRibbonDoubleFolded.prototype.customProperties = [
-			{name:'dx', dispName:'Fold Length', min:0, defVal: 25},
-			{name:'dy', dispName:'Ribbon Width', min:0, defVal: 15}
-		]);
+mxShapeInfographicRibbonDoubleFolded.prototype.customProperties = [
+	{name:'dx', dispName:'Fold Length', min:0, defVal: 25},
+	{name:'dy', dispName:'Ribbon Width', min:0, defVal: 15}
+];
 
 /**
 * Function: paintVertexShape
@@ -479,12 +528,9 @@ mxShapeInfographicRibbonDoubleFolded.prototype.paintVertexShape = function(c, x,
 	c.lineTo(0, h - dy);
 	c.close();
 	c.stroke();
-	
 };
 
 mxCellRenderer.registerShape(mxShapeInfographicRibbonDoubleFolded.prototype.cst.RIBBON_DOUBLE_FOLDED, mxShapeInfographicRibbonDoubleFolded);
-
-mxShapeInfographicRibbonDoubleFolded.prototype.constraints = null;
 
 Graph.handleFactory[mxShapeInfographicRibbonDoubleFolded.prototype.cst.RIBBON_DOUBLE_FOLDED] = function(state)
 {
@@ -501,6 +547,28 @@ Graph.handleFactory[mxShapeInfographicRibbonDoubleFolded.prototype.cst.RIBBON_DO
 	})];
 			
 	return handles;
+};
+
+mxShapeInfographicRibbonDoubleFolded.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dx = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx', this.dx))));
+	var dy = Math.max(0, Math.min(h * 0.5, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
+
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.25, 0), false, null, 0, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false, null, 0, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.75, 0), false, null, 0, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0), false, null, 0, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0.5), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0), false, null, 0, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.75, 0), false, null, 0, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false, null, 0, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.25, 0), false, null, 0, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0.5), false));
+
+	return (constr);
 };
 
 //**********************************************************************************************************************************************************
@@ -528,12 +596,11 @@ mxUtils.extend(mxShapeInfographicRibbonFrontFolded, mxActor);
 
 mxShapeInfographicRibbonFrontFolded.prototype.cst = {RIBBON_FRONT_FOLDED : 'mxgraph.infographic.ribbonFrontFolded'};
 
-(
-		mxShapeInfographicRibbonFrontFolded.prototype.customProperties = [
-			{name:'dx', dispName:'Fold Length', min:0, defVal: 25},
-			{name:'dy', dispName:'Ribbon Width', min:0, defVal: 15},
-			{name:'notch', dispName:'Notch', min:0, defVal: 15}
-		]);
+mxShapeInfographicRibbonFrontFolded.prototype.customProperties = [
+	{name:'dx', dispName:'Fold Length', min:0, defVal: 25},
+	{name:'dy', dispName:'Ribbon Width', min:0, defVal: 15},
+	{name:'notch', dispName:'Notch', min:0, defVal: 15}
+];
 
 /**
 * Function: paintVertexShape
@@ -580,12 +647,9 @@ mxShapeInfographicRibbonFrontFolded.prototype.paintVertexShape = function(c, x, 
 	c.lineTo(0, h);
 	c.close();
 	c.stroke();
-	
 };
 
 mxCellRenderer.registerShape(mxShapeInfographicRibbonFrontFolded.prototype.cst.RIBBON_FRONT_FOLDED, mxShapeInfographicRibbonFrontFolded);
-
-mxShapeInfographicRibbonFrontFolded.prototype.constraints = null;
 
 Graph.handleFactory[mxShapeInfographicRibbonFrontFolded.prototype.cst.RIBBON_FRONT_FOLDED] = function(state)
 {
@@ -613,9 +677,31 @@ Graph.handleFactory[mxShapeInfographicRibbonFrontFolded.prototype.cst.RIBBON_FRO
 	});
 			
 	handles.push(handle2);
-	
 
 	return handles;
+};
+
+mxShapeInfographicRibbonFrontFolded.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dx = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx', this.dx))));
+	var dy = Math.max(0, Math.min(h * 0.5, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
+	var notch = Math.max(0, Math.min(w - dx, parseFloat(mxUtils.getValue(this.style, 'notch', this.notch))));
+
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.25, 0), false, null, 0, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false, null, 0, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.75, 0), false, null, 0, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0), false, null, 0, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - notch, (h + dy) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.75, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.25, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, (h + dy) * 0.5));
+
+	return (constr);
 };
 
 //**********************************************************************************************************************************************************
@@ -643,12 +729,11 @@ mxUtils.extend(mxShapeInfographicRibbonBackFolded, mxActor);
 
 mxShapeInfographicRibbonBackFolded.prototype.cst = {RIBBON_BACK_FOLDED : 'mxgraph.infographic.ribbonBackFolded'};
 
-(
-		mxShapeInfographicRibbonBackFolded.prototype.customProperties = [
-			{name:'dx', dispName:'Fold Length', min:0, defVal: 25},
-			{name:'dy', dispName:'Ribbon Width', min:0, defVal: 15},
-			{name:'notch', dispName:'Notch', min:0, defVal: 15}
-		]);
+mxShapeInfographicRibbonBackFolded.prototype.customProperties = [
+	{name:'dx', dispName:'Fold Length', min:0, defVal: 25},
+	{name:'dy', dispName:'Ribbon Width', min:0, defVal: 15},
+	{name:'notch', dispName:'Notch', min:0, defVal: 15}
+];
 
 /**
 * Function: paintVertexShape
@@ -694,12 +779,9 @@ mxShapeInfographicRibbonBackFolded.prototype.paintVertexShape = function(c, x, y
 	c.lineTo(0, h);
 	c.close();
 	c.stroke();
-	
 };
 
 mxCellRenderer.registerShape(mxShapeInfographicRibbonBackFolded.prototype.cst.RIBBON_BACK_FOLDED, mxShapeInfographicRibbonBackFolded);
-
-mxShapeInfographicRibbonBackFolded.prototype.constraints = null;
 
 Graph.handleFactory[mxShapeInfographicRibbonBackFolded.prototype.cst.RIBBON_BACK_FOLDED] = function(state)
 {
@@ -731,6 +813,29 @@ Graph.handleFactory[mxShapeInfographicRibbonBackFolded.prototype.cst.RIBBON_BACK
 	return handles;
 };
 
+mxShapeInfographicRibbonBackFolded.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dx = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx', this.dx))));
+	var dy = Math.max(0, Math.min(h * 0.5, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
+	var notch = Math.max(0, Math.min(w - dx, parseFloat(mxUtils.getValue(this.style, 'notch', this.notch))));
+
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.25, 0), false, null, 0, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false, null, 0, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.75, 0), false, null, 0, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0), false, null, 0, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - notch, (h + dy) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.75, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.25, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, (h + dy) * 0.5));
+
+	return (constr);
+};
+
 //**********************************************************************************************************************************************************
 //Banner
 //**********************************************************************************************************************************************************
@@ -756,12 +861,11 @@ mxUtils.extend(mxShapeInfographicBanner, mxActor);
 
 mxShapeInfographicBanner.prototype.cst = {BANNER : 'mxgraph.infographic.banner'};
 
-(
-		mxShapeInfographicBanner.prototype.customProperties = [
-			{name:'dx', dispName:'Fold Length', min:0, defVal: 25},
-			{name:'dy', dispName:'Ribbon Width', min:0, defVal: 15},
-			{name:'notch', dispName:'Notch', min:0, defVal: 15}
-		]);
+mxShapeInfographicBanner.prototype.customProperties = [
+	{name:'dx', dispName:'Fold Length', min:0, defVal: 25},
+	{name:'dy', dispName:'Ribbon Width', min:0, defVal: 15},
+	{name:'notch', dispName:'Notch', min:0, defVal: 15}
+];
 
 /**
 * Function: paintVertexShape
@@ -829,12 +933,9 @@ mxShapeInfographicBanner.prototype.paintVertexShape = function(c, x, y, w, h)
 	c.lineTo(w - dx - 2 * dy, h);
 	c.close();
 	c.fill();
-	
 };
 
 mxCellRenderer.registerShape(mxShapeInfographicBanner.prototype.cst.BANNER, mxShapeInfographicBanner);
-
-mxShapeInfographicBanner.prototype.constraints = null;
 
 Graph.handleFactory[mxShapeInfographicBanner.prototype.cst.BANNER] = function(state)
 {
@@ -867,6 +968,34 @@ Graph.handleFactory[mxShapeInfographicBanner.prototype.cst.BANNER] = function(st
 	return handles;
 };
 
+mxShapeInfographicBanner.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dx = Math.max(0, Math.min(w / 2, parseFloat(mxUtils.getValue(this.style, 'dx', this.dx))));
+	var dy = Math.max(0, Math.min(h * 0.5, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
+	var notch = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'notch', this.notch))));
+	dx = Math.min(w / 2 - 2 * dy, dx);
+	notch = Math.min(dx, notch);
+	var w2 = w - 2 * dx;
+
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx + w2 * 0.25, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx + w2 * 0.5, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx + w2 * 0.75, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx + w2, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx + w2, (h - dy) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx + w2, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx + w2 * 0.75, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx + w2 * 0.5, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx + w2 * 0.25, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx, (h - dy) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, notch, (h + dy) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - notch, (h + dy) * 0.5));
+
+	return (constr);
+};
+
 //**********************************************************************************************************************************************************
 //Circular Callout
 //**********************************************************************************************************************************************************
@@ -890,10 +1019,9 @@ mxUtils.extend(mxShapeInfographicCircularCallout, mxActor);
 
 mxShapeInfographicCircularCallout.prototype.cst = {CIRCULAR_CALLOUT : 'mxgraph.infographic.circularCallout'};
 
-(
-		mxShapeInfographicCircularCallout.prototype.customProperties = [
-			{name:'dy', dispName:'Ribbon Width', min:0, defVal: 15}
-		]);
+mxShapeInfographicCircularCallout.prototype.customProperties = [
+	{name:'dy', dispName:'Ribbon Width', min:0, defVal: 15}
+];
 
 /**
 * Function: paintVertexShape
@@ -923,12 +1051,9 @@ mxShapeInfographicCircularCallout.prototype.paintVertexShape = function(c, x, y,
 	c.arcTo(rx, ry, 0, 0, 0, w * 0.5, h * 0.5 - ry);
 	c.close();
 	c.fillAndStroke();
-	
 };
 
 mxCellRenderer.registerShape(mxShapeInfographicCircularCallout.prototype.cst.CIRCULAR_CALLOUT, mxShapeInfographicCircularCallout);
-
-mxShapeInfographicCircularCallout.prototype.constraints = null;
 
 Graph.handleFactory[mxShapeInfographicCircularCallout.prototype.cst.CIRCULAR_CALLOUT] = function(state)
 {
@@ -943,6 +1068,25 @@ Graph.handleFactory[mxShapeInfographicCircularCallout.prototype.cst.CIRCULAR_CAL
 	})];
 			
 	return handles;
+};
+
+mxShapeInfographicCircularCallout.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dy = Math.max(0, Math.min(h * 0.5, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
+	var rx = Math.max(0, Math.min(w * 0.5, w * 0.5 - dy));
+	var ry = Math.max(0, Math.min(h * 0.5, h * 0.5 - dy));
+	
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0.5), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.855, 0.855), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.145, 0.855), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0.5), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.145, 0.145), false));
+
+	return (constr);
 };
 
 //**********************************************************************************************************************************************************
@@ -966,8 +1110,6 @@ function mxShapeInfographicShadedTriangle(bounds, fill, stroke, strokewidth)
 mxUtils.extend(mxShapeInfographicShadedTriangle, mxActor);
 
 mxShapeInfographicShadedTriangle.prototype.cst = {SHADED_TRIANGLE : 'mxgraph.infographic.shadedTriangle'};
-
-
 
 /**
 * Function: paintVertexShape
@@ -1012,12 +1154,23 @@ mxShapeInfographicShadedTriangle.prototype.paintVertexShape = function(c, x, y, 
 	c.lineTo(w, h);
 	c.close();
 	c.stroke();
-	
 };
 
 mxCellRenderer.registerShape(mxShapeInfographicShadedTriangle.prototype.cst.SHADED_TRIANGLE, mxShapeInfographicShadedTriangle);
 
-mxShapeInfographicShadedTriangle.prototype.constraints = null;
+mxShapeInfographicShadedTriangle.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.75, 0.5), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.25, 0.5), false));
+
+	return (constr);
+};
 
 //**********************************************************************************************************************************************************
 //Shaded pyramid
@@ -1040,8 +1193,6 @@ function mxShapeInfographicShadedPyramid(bounds, fill, stroke, strokewidth)
 mxUtils.extend(mxShapeInfographicShadedPyramid, mxActor);
 
 mxShapeInfographicShadedPyramid.prototype.cst = {SHADED_PYRAMID : 'mxgraph.infographic.shadedPyramid'};
-
-
 
 /**
 * Function: paintVertexShape
@@ -1093,7 +1244,22 @@ mxShapeInfographicShadedPyramid.prototype.paintVertexShape = function(c, x, y, w
 
 mxCellRenderer.registerShape(mxShapeInfographicShadedPyramid.prototype.cst.SHADED_PYRAMID, mxShapeInfographicShadedPyramid);
 
-mxShapeInfographicShadedPyramid.prototype.constraints = null;
+mxShapeInfographicShadedPyramid.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var h1 = Math.max(h - w * 0.3, 0);
+	
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.75, h1 * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, h1));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.75, (h + h1) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.25, (h + h1) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h1));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.25, h1 * 0.5));
+
+	return (constr);
+};
 
 //**********************************************************************************************************************************************************
 //Pyramid step
@@ -1116,8 +1282,6 @@ function mxShapeInfographicPyramidStep(bounds, fill, stroke, strokewidth)
 mxUtils.extend(mxShapeInfographicPyramidStep, mxActor);
 
 mxShapeInfographicPyramidStep.prototype.cst = {PYRAMID_STEP : 'mxgraph.infographic.pyramidStep'};
-
-
 
 /**
 * Function: paintVertexShape
@@ -1173,7 +1337,29 @@ mxShapeInfographicPyramidStep.prototype.paintVertexShape = function(c, x, y, w, 
 
 mxCellRenderer.registerShape(mxShapeInfographicPyramidStep.prototype.cst.PYRAMID_STEP, mxShapeInfographicPyramidStep);
 
-mxShapeInfographicPyramidStep.prototype.constraints = null;
+mxShapeInfographicPyramidStep.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var h1 = Math.max(w * 0.1, 0);
+	
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.75, h1 * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, h1));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, h1 + (h - h1) * 0.25));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, h1 + (h - h1) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, h1 + (h - h1) * 0.75));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.75, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.25, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h1 + (h - h1) * 0.75));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h1 + (h - h1) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h1 + (h - h1) * 0.25));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.25, h1 * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h1));
+	return (constr);
+};
 
 //**********************************************************************************************************************************************************
 //Cylinder
@@ -1196,8 +1382,6 @@ function mxShapeInfographicCylinder(bounds, fill, stroke, strokewidth)
 mxUtils.extend(mxShapeInfographicCylinder, mxActor);
 
 mxShapeInfographicCylinder.prototype.cst = {CYLINDER : 'mxgraph.infographic.cylinder'};
-
-
 
 /**
 * Function: paintVertexShape
@@ -1242,7 +1426,28 @@ mxShapeInfographicCylinder.prototype.paintVertexShape = function(c, x, y, w, h)
 
 mxCellRenderer.registerShape(mxShapeInfographicCylinder.prototype.cst.CYLINDER, mxShapeInfographicCylinder);
 
-mxShapeInfographicCylinder.prototype.constraints = null;
+mxShapeInfographicCylinder.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dy = 20;
+	var rx = w * 0.5;
+	var ry = dy * 0.5;
+	
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, dy * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, dy * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, dy * 0.5 + (h - dy) * 0.25));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, dy * 0.5 + (h - dy) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, dy * 0.5 + (h - dy) * 0.75));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, h - dy * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h - dy * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, dy * 0.5 + (h - dy) * 0.75));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, dy * 0.5 + (h - dy) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, dy * 0.5 + (h - dy) * 0.25));
+
+	return (constr);
+};
 
 //**********************************************************************************************************************************************************
 //Circular Callout 2
@@ -1266,8 +1471,6 @@ function mxShapeInfographicCircularCallout2(bounds, fill, stroke, strokewidth)
 mxUtils.extend(mxShapeInfographicCircularCallout2, mxActor);
 
 mxShapeInfographicCircularCallout2.prototype.cst = {CIRCULAR_CALLOUT_2 : 'mxgraph.infographic.circularCallout2'};
-
-
 
 /**
 * Function: paintVertexShape
@@ -1355,7 +1558,18 @@ mxShapeInfographicCircularCallout2.prototype.paintVertexShape = function(c, x, y
 
 mxCellRenderer.registerShape(mxShapeInfographicCircularCallout2.prototype.cst.CIRCULAR_CALLOUT_2, mxShapeInfographicCircularCallout2);
 
-mxShapeInfographicCircularCallout2.prototype.constraints = null;
+mxShapeInfographicCircularCallout2.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var rx = Math.max(0, Math.min(w * 0.5, h * 0.4, h * 0.5 - 7));
+
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 - rx, rx));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 + rx, rx));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 1), false));
+
+	return (constr);
+};
 
 //**********************************************************************************************************************************************************
 //Banner Single Fold
@@ -1383,12 +1597,11 @@ mxUtils.extend(mxShapeInfographicBannerSingleFold, mxActor);
 
 mxShapeInfographicBannerSingleFold.prototype.cst = {BANNER_SINGLE_FOLD : 'mxgraph.infographic.bannerSingleFold'};
 
-(
-		mxShapeInfographicBannerSingleFold.prototype.customProperties = [
-			{name:'dx', dispName: 'Fold Length', type:'float', defVal:32, min:0},
-			{name:'dy', dispName: 'Banner Width', type:'float', defVal:17, min:0},
-			{name:'notch', dispName: 'Notch', type:'float', defVal:15, min:0}
-		]);
+mxShapeInfographicBannerSingleFold.prototype.customProperties = [
+	{name:'dx', dispName: 'Fold Length', type:'float', defVal:32, min:0},
+	{name:'dy', dispName: 'Banner Width', type:'float', defVal:17, min:0},
+	{name:'notch', dispName: 'Notch', type:'float', defVal:15, min:0}
+];
 
 /**
 * Function: paintVertexShape
@@ -1406,7 +1619,6 @@ mxShapeInfographicBannerSingleFold.prototype.paintVertexShape = function(c, x, y
 	dx = Math.min(w - 2 * dy, dx);
 
 	var dx2 = Math.max(0, Math.min(w - dx - 2 * dy, parseFloat(mxUtils.getValue(this.style, 'dx2', this.dx2))));
-//	c.lineTo(w - dx - 2 * dy, h);
 
 	notch = Math.min(dx, notch);
 	
@@ -1462,8 +1674,6 @@ mxShapeInfographicBannerSingleFold.prototype.paintVertexShape = function(c, x, y
 
 mxCellRenderer.registerShape(mxShapeInfographicBannerSingleFold.prototype.cst.BANNER_SINGLE_FOLD, mxShapeInfographicBannerSingleFold);
 
-mxShapeInfographicBannerSingleFold.prototype.constraints = null;
-
 Graph.handleFactory[mxShapeInfographicBannerSingleFold.prototype.cst.BANNER_SINGLE_FOLD] = function(state)
 {
 	var handles = [Graph.createHandle(state, ['dx', 'dy'], function(bounds)
@@ -1513,6 +1723,42 @@ Graph.handleFactory[mxShapeInfographicBannerSingleFold.prototype.cst.BANNER_SING
 	return handles;
 };
 
+mxShapeInfographicBannerSingleFold.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dx = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx', this.dx))));
+	var dy = Math.max(0, Math.min(h * 0.5, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
+	var notch = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'notch', this.notch))));
+	dx = Math.min(w - 2 * dy, dx);
+	var dx2 = Math.max(0, Math.min(w - dx - 2 * dy, parseFloat(mxUtils.getValue(this.style, 'dx2', this.dx2))));
+	notch = Math.min(dx, notch);
+	var w2 = w - dx - dx2;
+	
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, (h - dy) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2 + w2 * 0.25, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2 + w2 * 0.5, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2 + w2 * 0.75, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2 + w2, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx * 0.25, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx * 0.5, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx * 0.75, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - notch, (h + dy) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx - 2 * dy, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - (dx + 2 * dy) * 0.75, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - (dx + 2 * dy) * 0.5, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - (dx + 2 * dy) * 0.25, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2 + w2 * 0.25, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2 + w2 * 0.5, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2 + w2 * 0.75, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2 + w2, h - dy));
+	
+	return (constr);
+};
+
 //**********************************************************************************************************************************************************
 //Shaded Cube
 //**********************************************************************************************************************************************************
@@ -1536,10 +1782,9 @@ mxUtils.extend(mxShapeBasicShadedCube, mxActor);
 
 mxShapeBasicShadedCube.prototype.cst = {SHADED_CUBE : 'mxgraph.infographic.shadedCube'};
 
-(
-		mxShapeBasicShadedCube.prototype.customProperties = [
-			{name:'isoAngle', dispName: 'Perspective', type:'float', defVal:15, min:0}
-		]);
+mxShapeBasicShadedCube.prototype.customProperties = [
+	{name:'isoAngle', dispName: 'Perspective', type:'float', defVal:15, min:0}
+];
 
 /**
 * Function: paintVertexShape
@@ -1587,8 +1832,6 @@ mxShapeBasicShadedCube.prototype.paintVertexShape = function(c, x, y, w, h)
 
 mxCellRenderer.registerShape(mxShapeBasicShadedCube.prototype.cst.SHADED_CUBE, mxShapeBasicShadedCube);
 
-mxShapeBasicShadedCube.prototype.constraints = null;
-
 Graph.handleFactory[mxShapeBasicShadedCube.prototype.cst.SHADED_CUBE] = function(state)
 {
 	var handles = [Graph.createHandle(state, ['isoAngle'], function(bounds)
@@ -1603,6 +1846,33 @@ Graph.handleFactory[mxShapeBasicShadedCube.prototype.cst.SHADED_CUBE] = function
 	})];
 			
 	return handles;
+};
+
+mxShapeBasicShadedCube.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var isoAngle = Math.max(0.01, Math.min(94, parseFloat(mxUtils.getValue(this.style, 'isoAngle', this.isoAngle)))) * Math.PI / 200 ;
+	var isoH = Math.min(w * Math.tan(isoAngle), h * 0.5);
+	
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.75, isoH * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, isoH));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, isoH + (h - 2 * isoH) * 0.25));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, isoH + (h - 2 * isoH) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, isoH + (h - 2 * isoH) * 0.75));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, h - isoH));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.75, h - isoH * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.25, h - isoH * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h - isoH));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h - isoH));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, isoH + (h - 2 * isoH) * 0.75));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, isoH + (h - 2 * isoH) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, isoH + (h - 2 * isoH) * 0.25));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, isoH));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.25, isoH * 0.5));
+
+	return (constr);
 };
 
 //**********************************************************************************************************************************************************
@@ -1630,12 +1900,11 @@ mxUtils.extend(mxShapeBasicPartConcEllipse, mxActor);
 
 mxShapeBasicPartConcEllipse.prototype.cst = {PART_CONC_ELLIPSE : 'mxgraph.infographic.partConcEllipse'};
 
-(
-		mxShapeBasicPartConcEllipse.prototype.customProperties = [
-			{name:'startAngle', dispName:'Start Angle', min:0, max:1, defVal: 0.25},
-			{name:'endAngle', dispName:'End Angle', min:0, max:1, defVal: 0.1},
-			{name:'arcWidth', dispName:'Arc Width', min:0, max:1, defVal: 0.5}
-		]);
+mxShapeBasicPartConcEllipse.prototype.customProperties = [
+	{name:'startAngle', dispName:'Start Angle', min:0, max:1, defVal: 0.25},
+	{name:'endAngle', dispName:'End Angle', min:0, max:1, defVal: 0.1},
+	{name:'arcWidth', dispName:'Arc Width', min:0, max:1, defVal: 0.5}
+];
 
 /**
 * Function: paintVertexShape
@@ -1707,7 +1976,6 @@ mxShapeBasicPartConcEllipse.prototype.paintVertexShape = function(c, x, y, w, h)
 	c.arcTo(rx2, ry2, 0, bigArc, 1, innerStartX, innerStartY);
 	c.close();
 	c.fill();
-
 	
 	var rx = w * 0.5;
 	var ry = h * 0.5;
@@ -1733,13 +2001,9 @@ mxShapeBasicPartConcEllipse.prototype.paintVertexShape = function(c, x, y, w, h)
 	c.arcTo(rx3, ry3, 0, 0, 0, rx, h * 0.5 - ry3);
 	c.close();
 	c.fill();
-	
-
 };
 
 mxCellRenderer.registerShape(mxShapeBasicPartConcEllipse.prototype.cst.PART_CONC_ELLIPSE, mxShapeBasicPartConcEllipse);
-
-mxShapeBasicPartConcEllipse.prototype.constraints = null;
 
 Graph.handleFactory[mxShapeBasicPartConcEllipse.prototype.cst.PART_CONC_ELLIPSE] = function(state)
 {
@@ -1801,6 +2065,22 @@ Graph.handleFactory[mxShapeBasicPartConcEllipse.prototype.cst.PART_CONC_ELLIPSE]
 	return handles;
 };
 
+mxShapeBasicPartConcEllipse.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	
+	constr.push(new mxConnectionConstraint(new mxPoint(0.145, 0.145), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.855, 0.145), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0.5), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.855, 0.855), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.145, 0.855), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0.5), false));
+
+	return (constr);
+};
+
 //**********************************************************************************************************************************************************
 //Banner Half Fold
 //**********************************************************************************************************************************************************
@@ -1826,12 +2106,11 @@ mxUtils.extend(mxShapeInfographicBannerHalfFold, mxActor);
 
 mxShapeInfographicBannerHalfFold.prototype.cst = {BANNER_HALF_FOLD : 'mxgraph.infographic.bannerHalfFold'};
 
-(
-		mxShapeInfographicBannerHalfFold.prototype.customProperties = [
-			{name:'dx', dispName:'Banner Width', min:0, defVal: 40},
-			{name:'dx2', dispName:'Spike Size', min:0, defVal: 20},
-			{name:'notch', dispName:'Notch Size', min:0, defVal: 15}
-		]);
+mxShapeInfographicBannerHalfFold.prototype.customProperties = [
+	{name:'dx', dispName:'Banner Width', min:0, defVal: 40},
+	{name:'dx2', dispName:'Spike Size', min:0, defVal: 20},
+	{name:'notch', dispName:'Notch Size', min:0, defVal: 15}
+];
 
 /**
 * Function: paintVertexShape
@@ -1885,12 +2164,9 @@ mxShapeInfographicBannerHalfFold.prototype.paintVertexShape = function(c, x, y, 
 	c.lineTo(0, dx * 0.5);
 	c.close();
 	c.stroke();
-	
 };
 
 mxCellRenderer.registerShape(mxShapeInfographicBannerHalfFold.prototype.cst.BANNER_HALF_FOLD, mxShapeInfographicBannerHalfFold);
-
-mxShapeInfographicBannerHalfFold.prototype.constraints = null;
 
 Graph.handleFactory[mxShapeInfographicBannerHalfFold.prototype.cst.BANNER_HALF_FOLD] = function(state)
 {
@@ -1935,6 +2211,42 @@ Graph.handleFactory[mxShapeInfographicBannerHalfFold.prototype.cst.BANNER_HALF_F
 	return handles;
 };
 
+mxShapeInfographicBannerHalfFold.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dx = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx', this.dx))));
+	var dx2 = Math.max(0, Math.min(w - dx, parseFloat(mxUtils.getValue(this.style, 'dx2', this.dx2))));
+	var notch = Math.max(0, Math.min(h - dx, parseFloat(mxUtils.getValue(this.style, 'notch', this.notch))));
+	var w2 = w - dx - dx2;
+	var h2 = h - dx;
+
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, dx * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2 + w2 * 0.25, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2 + w2 * 0.5, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2 + w2 * 0.75, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx * 0.5, dx * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, dx));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, dx + h2 * 0.25));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, dx + h2 * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, dx + h2 * 0.75));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx * 0.5, h - notch));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, dx + h2 * 0.75));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, dx + h2 * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, dx + h2 * 0.25));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w - dx, dx));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2 + w2 * 0.25, dx));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2 + w2 * 0.5, dx));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2 + w2 * 0.75, dx));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx2, dx));
+
+	return (constr);
+};
+
 //**********************************************************************************************************************************************************
 //Circular Dial
 //**********************************************************************************************************************************************************
@@ -1958,10 +2270,9 @@ mxUtils.extend(mxShapeInfographicCircularDial, mxActor);
 
 mxShapeInfographicCircularDial.prototype.cst = {CIRCULAR_DIAL : 'mxgraph.infographic.circularDial'};
 
-(
-		mxShapeInfographicCircularDial.prototype.customProperties = [
-			{name:'dy', dispName:'Hole Size', min:0, defVal: 15}
-		]);
+mxShapeInfographicCircularDial.prototype.customProperties = [
+	{name:'dy', dispName:'Hole Size', min:0, defVal: 15}
+];
 
 /**
 * Function: paintVertexShape
@@ -2007,8 +2318,6 @@ mxShapeInfographicCircularDial.prototype.paintVertexShape = function(c, x, y, w,
 
 mxCellRenderer.registerShape(mxShapeInfographicCircularDial.prototype.cst.CIRCULAR_DIAL, mxShapeInfographicCircularDial);
 
-mxShapeInfographicCircularDial.prototype.constraints = null;
-
 Graph.handleFactory[mxShapeInfographicCircularDial.prototype.cst.CIRCULAR_DIAL] = function(state)
 {
 	var handles = [Graph.createHandle(state, ['dy'], function(bounds)
@@ -2022,6 +2331,28 @@ Graph.handleFactory[mxShapeInfographicCircularDial.prototype.cst.CIRCULAR_DIAL] 
 	})];
 			
 	return handles;
+};
+
+mxShapeInfographicCircularDial.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dy = Math.max(0, Math.min(h * 0.5 - 10, w * 0.5, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
+	var rx = Math.max(0, Math.min(w * 0.5, h * 0.5 - 10));
+	var rx2 = rx - dy;
+	
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 - rx, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 - rx, (rx + h) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 - rx, rx));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 - rx * 0.71, rx * 0.29));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 + rx * 0.71, rx * 0.29));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 + rx, rx));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 + rx, (rx + h) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 + rx, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 + rx * 0.5, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5 - rx * 0.5, h));
+
+	return (constr);
 };
 
 //**********************************************************************************************************************************************************
@@ -2048,11 +2379,10 @@ mxUtils.extend(mxShapeInfographicRibbonSimple, mxActor);
 
 mxShapeInfographicRibbonSimple.prototype.cst = {RIBBON_SIMPLE : 'mxgraph.infographic.ribbonSimple'};
 
-(
-		mxShapeInfographicRibbonSimple.prototype.customProperties = [
-			{name:'notch1', dispName:'Notch Size', min:0, defVal: 20},
-			{name:'notch2', dispName:'Spike Size', min:0, defVal: 20}
-		]);
+mxShapeInfographicRibbonSimple.prototype.customProperties = [
+	{name:'notch1', dispName:'Notch Size', min:0, defVal: 20},
+	{name:'notch2', dispName:'Spike Size', min:0, defVal: 20}
+];
 
 /**
 * Function: paintVertexShape
@@ -2079,8 +2409,6 @@ mxShapeInfographicRibbonSimple.prototype.paintVertexShape = function(c, x, y, w,
 
 mxCellRenderer.registerShape(mxShapeInfographicRibbonSimple.prototype.cst.RIBBON_SIMPLE, mxShapeInfographicRibbonSimple);
 
-mxShapeInfographicRibbonSimple.prototype.constraints = null;
-
 Graph.handleFactory[mxShapeInfographicRibbonSimple.prototype.cst.RIBBON_SIMPLE] = function(state)
 {
 	var handles = [Graph.createHandle(state, ['notch1'], function(bounds)
@@ -2104,9 +2432,31 @@ Graph.handleFactory[mxShapeInfographicRibbonSimple.prototype.cst.RIBBON_SIMPLE] 
 	});
 			
 	handles.push(handle2);
-	
 
 	return handles;
+};
+
+mxShapeInfographicRibbonSimple.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var notch1 = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'notch1', this.notch2))));
+	var notch2 = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'notch2', this.notch2))));
+	var w2 = w - notch2;
+	
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w2 * 0.25, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w2 * 0.5, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w2 * 0.75, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w2, 0));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0.5), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w2, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w2 * 0.75, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w2 * 0.5, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w2 * 0.25, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 1), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, notch1, h * 0.5));
+
+	return (constr);
 };
 
 //**********************************************************************************************************************************************************
@@ -2133,11 +2483,10 @@ mxUtils.extend(mxShapeInfographicBarCallout, mxActor);
 
 mxShapeInfographicBarCallout.prototype.cst = {BAR_CALLOUT : 'mxgraph.infographic.barCallout'};
 
-(
-		mxShapeInfographicBarCallout.prototype.customProperties = [
-			{name:'dx', dispName:'Callout Position', min:0, defVal: 100},
-			{name:'dy', dispName:'Callout Size', min:0, defVal: 30}
-		]);
+mxShapeInfographicBarCallout.prototype.customProperties = [
+	{name:'dx', dispName:'Callout Position', min:0, defVal: 100},
+	{name:'dy', dispName:'Callout Size', min:0, defVal: 30}
+];
 
 /**
 * Function: paintVertexShape
@@ -2187,6 +2536,29 @@ Graph.handleFactory[mxShapeInfographicBarCallout.prototype.cst.BAR_CALLOUT] = fu
 	return handles;
 };
 
+mxShapeInfographicBarCallout.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dx = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx', this.dx))));
+	var dy = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
+	var x1 = Math.max(dx - dy * 0.35, 0);
+	var x2 = Math.min(dx + dy * 0.35, w);
+
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.25, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.75, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, (h - dy) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.75, 0), false, null, 0, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.25, 0), false, null, 0, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h - dy));
+
+	return (constr);
+};
+
 //**********************************************************************************************************************************************************
 //Flag
 //**********************************************************************************************************************************************************
@@ -2211,11 +2583,10 @@ mxUtils.extend(mxShapeInfographicFlag, mxActor);
 
 mxShapeInfographicFlag.prototype.cst = {FLAG : 'mxgraph.infographic.flag'};
 
-(
-		mxShapeInfographicFlag.prototype.customProperties = [
-			{name:'dx', dispName:'Pole Width', min:0, defVal: 30},
-			{name:'dy', dispName:'Spike Size', min:0, defVal: 20}
-		]);
+mxShapeInfographicFlag.prototype.customProperties = [
+	{name:'dx', dispName:'Pole Width', min:0, defVal: 30},
+	{name:'dy', dispName:'Spike Size', min:0, defVal: 20}
+];
 
 /**
 * Function: paintVertexShape
@@ -2250,12 +2621,9 @@ mxShapeInfographicFlag.prototype.paintVertexShape = function(c, x, y, w, h)
 	c.lineTo(0, h - dy);
 	c.close();
 	c.fill();
-	
 };
 
 mxCellRenderer.registerShape(mxShapeInfographicFlag.prototype.cst.FLAG, mxShapeInfographicFlag);
-
-mxShapeInfographicFlag.prototype.constraints = null;
 
 Graph.handleFactory[mxShapeInfographicFlag.prototype.cst.FLAG] = function(state)
 {
@@ -2272,5 +2640,29 @@ Graph.handleFactory[mxShapeInfographicFlag.prototype.cst.FLAG] = function(state)
 	})];
 			
 	return handles;
+};
+
+mxShapeInfographicFlag.prototype.getConstraints = function(style, w, h)
+{
+	var constr = [];
+	var dx = Math.max(0, Math.min(w, parseFloat(mxUtils.getValue(this.style, 'dx', this.dx))));
+	var dy = Math.max(0, Math.min(h, parseFloat(mxUtils.getValue(this.style, 'dy', this.dy))));
+
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.25, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.5, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0.75, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(1, 0), false));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, (h - dy) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, 0, (h - dy) * 0.5));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.75, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.5, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, w * 0.25, h - dy));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx * 0.5, h));
+	constr.push(new mxConnectionConstraint(new mxPoint(0, 0), false, null, dx * 0.5, 0));
+
+	return (constr);
 };
 
